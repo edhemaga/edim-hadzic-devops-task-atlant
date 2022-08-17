@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  postgres-db:
+    container_name: postgres
+    image: 'postgres'
+    ports:
+      - '5432:5432'
+    expose:
+      - 5432
+    env_file:
+      - 'env/db.env'
+    volumes:
+     - data:/spring-boot-app/src/main/resources/db/migration/V1__empty.sql
+    networks:
+      - my-network
+  node-be:
+    container_name: node-be
+    build:
+      context: './node-app'
+    ports:
+      - '8081:8081'
+    networks:
+      - my-network
+  java-be:
+    container_name: java-be
+    build:
+      context: './spring-boot-app'
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres-db
+    links:
+      - postgres-db
+    networks:
+      - my-network
+
+volumes:
+  data:
+
+networks:
+  my-network:
+    driver: bridge
