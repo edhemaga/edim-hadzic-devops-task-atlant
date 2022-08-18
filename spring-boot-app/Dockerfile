@@ -1,14 +1,14 @@
-FROM maven AS maven
+FROM maven:3.8.6-jdk-8 AS build
 
-RUN  mvn clean package 
+COPY . .
 
-COPY *.jar .
+RUN mvn -f pom.xml clean package
 
 FROM openjdk:8-jdk-alpine AS jdk
 
-ARG JAR_FILE=target/*.jar
+ARG JAR_FILE=/target/*.jar
 
-COPY ${JAR_FILE} app.jar
+COPY --from=build ${JAR_FILE} app.jar
 
 ARG CONFIG=src/main/resources/application.yml
 
@@ -16,4 +16,4 @@ COPY ${CONFIG} my-config.yml
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","/app.jar", "--spring.config.location=/my-config.yml"]
+ENTRYPOINT ["java","-jar","/app.jar", "--spring.config.location=my-config.yml"]
