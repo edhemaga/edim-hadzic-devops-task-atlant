@@ -1,7 +1,3 @@
-# Simple Microservices Project
+#Instructions to run
 
-## Description
-
-The project consists of two simple services:
- - spring-boot-app - Java application with SpringBoot
- - node-app - Node.js application with Express
+Simply execute 'docker-compose up'
